@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dronetrace"
+version = "0.1.0"
+description = "Turn DJI drone footage into a moving-map + speed + altitude video overlay, with true above-ground-level altitude."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Miha Smrekar" }]
+keywords = ["dji", "drone", "telemetry", "overlay", "hud", "davinci-resolve",
+            "gps", "srt", "agl", "video", "ffmpeg"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Video",
+]
+dependencies = ["Pillow>=10", "numpy>=1.24"]
+
+[project.urls]
+Homepage = "https://github.com/mihasm/dronetrace"
+Issues = "https://github.com/mihasm/dronetrace/issues"
+
+[project.scripts]
+dronetrace = "dronetrace:main"
+
+[tool.setuptools]
+py-modules = ["dronetrace"]

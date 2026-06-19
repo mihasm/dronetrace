@@ -1,0 +1,30 @@
+# caches (regenerated at runtime)
+.elevation_cache.json
+.tile_cache/
+
+# tool outputs
+*.overlay.mov
+*.preview.png
+*.preview.jpg
+
+# don't commit source footage
+*.mp4
+*.MP4
+*.mov
+*.MOV
+
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# keep example media (force-added despite the rules above)
+!examples/*.jpg
+!examples/*.png
