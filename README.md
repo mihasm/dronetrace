@@ -75,7 +75,7 @@ dronetrace flight.MP4 --fast
 | `--tiles sat\|osm` | `sat` | Map background: satellite (Esri) or street map (OSM) |
 | `--smooth N` | `9` | GPS smoothing window (samples ≈ seconds); `0` disables |
 | `--composite` | off | Composite the HUD with the footage into a finished H.264 file `<clip>.hud.mp4` (no editor needed) |
-| `--gpu` | off | Use Apple-Silicon hardware encoders (VideoToolbox) — ~5× faster encode |
+| `--gpu` / `--no-gpu` | auto | Apple-Silicon hardware encoders (VideoToolbox), ~5× faster. On automatically when available; `--no-gpu` forces CPU |
 | `--full` | off | Render at full video resolution (auto-aligns, no positioning) instead of panel-only |
 | `--fast` / `--scale F` | `1.0` | Render at half / arbitrary resolution scale |
 | `--home LAT,LON` | auto | Override the home point (otherwise trilaterated) |
@@ -85,11 +85,12 @@ dronetrace flight.MP4 --fast
 
 ## Performance
 
-Frame drawing (Pillow) and video encoding both run on the CPU by default. On
-**Apple Silicon**, add `--gpu` to encode on the media engine (VideoToolbox):
-H.264 for `--composite`, ProRes 4444 (with alpha) for overlays. In testing on an
-M2, an 8-second 4K composite went from **~33 s to ~6.5 s** (~5× faster). The
-panel-only default (vs `--full`) also avoids rendering a mostly-empty frame.
+Frame drawing uses Pillow on the CPU. Video encoding uses Apple Silicon's media
+engine (VideoToolbox) **automatically when available** — H.264 for `--composite`,
+ProRes 4444 (with alpha) for overlays; pass `--no-gpu` to force CPU encoding. In
+testing on an M2, an 8-second 4K composite went from **~33 s (CPU) to ~6.5 s**
+(~5× faster). The panel-only default (vs `--full`) also avoids rendering a
+mostly-empty frame.
 
 ## How it works
 

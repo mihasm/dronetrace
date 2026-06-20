@@ -598,6 +598,23 @@ def draw_dynamic(tile, lay, project, samples, dense, t, units):
 
 
 # ----------------------------------------------------------------------------- render
+_gpu_cache = None
+
+
+def gpu_available():
+    """True if ffmpeg has the Apple VideoToolbox encoders we use."""
+    global _gpu_cache
+    if _gpu_cache is None:
+        try:
+            enc = subprocess.run(["ffmpeg", "-hide_banner", "-encoders"],
+                                 capture_output=True, text=True).stdout
+            _gpu_cache = ("h264_videotoolbox" in enc
+                          and "prores_videotoolbox" in enc)
+        except Exception:
+            _gpu_cache = False
+    return _gpu_cache
+
+
 def render(path, out, units="kmh", scale=1.0, still=None, tiles="sat",
            start=0.0, seconds=None, smooth=9, alt="agl", home=None, full=False,
            composite=False, gpu=False):
@@ -737,12 +754,16 @@ def main():
     ap.add_argument("--composite", action="store_true",
                     help="composite the HUD with the footage into a finished H.264 "
                          "video (<clip>.hud.mp4) instead of a transparent overlay")
-    ap.add_argument("--gpu", action="store_true",
+    ap.add_argument("--gpu", action=argparse.BooleanOptionalAction, default=None,
                     help="use Apple VideoToolbox hardware encoders (much faster on "
-                         "Apple Silicon); h264 for --composite, ProRes for overlays")
+                         "Apple Silicon). On by default when available; "
+                         "use --no-gpu to force CPU encoding")
     args = ap.parse_args()
 
     scale = args.scale if args.scale else (0.5 if args.fast else 1.0)
+
+    # GPU on by default when the hardware encoders are present; --no-gpu forces CPU
+    use_gpu = gpu_available() if args.gpu is None else args.gpu
 
     home = None
     if args.home:
@@ -765,7 +786,7 @@ def main():
             try:
                 render(p, out, args.units, scale, tiles=args.tiles,
                        smooth=args.smooth, alt=args.alt, home=home,
-                       full=args.full, composite=args.composite, gpu=args.gpu)
+                       full=args.full, composite=args.composite, gpu=use_gpu)
             except Exception as e:
                 print(f"  SKIP {os.path.basename(p)}: {e}")
         return
@@ -780,7 +801,7 @@ def main():
         render(args.input, out, args.units, scale, tiles=args.tiles,
                start=args.start, seconds=args.seconds, smooth=args.smooth,
                alt=args.alt, home=home, full=args.full, composite=args.composite,
-               gpu=args.gpu)
+               gpu=use_gpu)
 
 
 if __name__ == "__main__":
