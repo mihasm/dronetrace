@@ -23,7 +23,7 @@ altitude readout.
 - 〰️ **Smoothing + Catmull-Rom spline** to fix DJI's coarse (4-decimal) GPS into a
   flowing path
 - 🎬 **ProRes 4444 + alpha** output, panel-cropped by default (≈4× faster than
-  full-frame) — prints the exact position to place it in your editor
+  full-frame)
 - 📁 **Batch a whole folder** with one shared, pooled home point per session
 - 🌐 Works offline too (plain map panel, relative altitude) — degrades gracefully
 
